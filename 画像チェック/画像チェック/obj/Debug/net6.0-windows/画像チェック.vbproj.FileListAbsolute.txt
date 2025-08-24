@@ -1,0 +1,17 @@
+C:\Users\81802\Documents\画像チェック\画像チェック\bin\Debug\net6.0-windows\画像チェック.exe
+C:\Users\81802\Documents\画像チェック\画像チェック\bin\Debug\net6.0-windows\画像チェック.deps.json
+C:\Users\81802\Documents\画像チェック\画像チェック\bin\Debug\net6.0-windows\画像チェック.runtimeconfig.json
+C:\Users\81802\Documents\画像チェック\画像チェック\bin\Debug\net6.0-windows\画像チェック.dll
+C:\Users\81802\Documents\画像チェック\画像チェック\bin\Debug\net6.0-windows\画像チェック.pdb
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.vbproj.AssemblyReference.cache
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.Form1.resources
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.vbproj.GenerateResource.cache
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.AssemblyInfoInputs.cache
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.AssemblyInfo.vb
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.vbproj.CoreCompileInputs.cache
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.dll
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\refint\画像チェック.dll
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.pdb
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\画像チェック.genruntimeconfig.cache
+C:\Users\81802\Documents\画像チェック\画像チェック\obj\Debug\net6.0-windows\ref\画像チェック.dll
