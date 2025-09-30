@@ -1,0 +1,22 @@
+val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+    addCategory(Intent.CATEGORY_OPENABLE)
+    type = "text/csv"  // CSVファイルのみ選択
+}
+startActivityForResult(intent, 1001)
+
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    if (requestCode == 1001 && resultCode == RESULT_OK) {
+        data?.data?.let { uri ->
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                inputStream.bufferedReader().useLines { lines ->
+                    lines.forEach { line ->
+                        val columns = line.split(",")
+                        println(columns)  // ログ出力やリストに格納
+                    }
+                }
+            }
+        }
+    }
+}
