@@ -1,0 +1,128 @@
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+# フォントの定義
+$fontName = "Tahoma"
+$fontSize = 10
+$mainFont = New-Object System.Drawing.Font($fontName, $fontSize)
+
+# フォームの作成
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "CSVファイルリスト結合ツール"
+$form.Size = New-Object System.Drawing.Size(850, 550) # フォームの幅を広げる
+$form.StartPosition = "CenterScreen"
+$form.BackColor = [System.Drawing.Color]::GhostWhite 
+$form.Font = $mainFont
+
+# ヘッダーテキストの作成
+$labelHeader = New-Object System.Windows.Forms.Label
+$labelHeader.Text = "結合タスクをリスト形式で入力してください"
+$labelHeader.Location = New-Object System.Drawing.Point(50, 15)
+$labelHeader.Size = New-Object System.Drawing.Size(700, 25)
+$labelHeader.Font = New-Object System.Drawing.Font($fontName, 11, [System.Drawing.FontStyle]::Bold)
+$labelHeader.ForeColor = [System.Drawing.Color]::DimGray
+
+# --- DataGridView (リスト) の作成 ---
+$dataGridView = New-Object System.Windows.Forms.DataGridView
+$dataGridView.Location = New-Object System.Drawing.Point(50, 50)
+$dataGridView.Size = New-Object System.Drawing.Size(750, 350) # サイズを調整
+$dataGridView.Font = $mainFont
+$dataGridView.AllowUserToAddRows = $true # ユーザーによる行の追加を許可
+
+# 列の定義
+$dataGridView.ColumnCount = 3
+$dataGridView.Columns[0].Name = "ファイルA"
+$dataGridView.Columns[0].Width = 250
+$dataGridView.Columns[1].Name = "ファイルB"
+$dataGridView.Columns[1].Width = 250
+$dataGridView.Columns[2].Name = "出力名"
+$dataGridView.Columns[2].Width = 250
+
+# 初期データの追加（例）
+$dataGridView.Rows.Add(@("C:\Users\81802\Desktop\dummy1.csv", "C:\Users\81802\Desktop\dummy2.csv", "C:\Users\81802\Desktop\dummy10.csv"))
+# $dataGridView.Rows.Add(@("C:\Users\81802\Desktop\dummy3.csv", "C:\Users\81802\Desktop\dummy4.csv", "C:\Users\81802\Desktop\dummy20.csv"))
+
+# ボタンの作成
+$button = New-Object System.Windows.Forms.Button
+$button.Text = "リストのタスクをすべて実行"
+$button.Location = New-Object System.Drawing.Point(300, 420) 
+$button.Size = New-Object System.Drawing.Size(250, 60)
+$button.BackColor = [System.Drawing.Color]::RoyalBlue         
+$button.ForeColor = [System.Drawing.Color]::White             
+$button.FlatStyle = [System.Windows.Forms.FlatStyle]::Flat    
+$button.FlatAppearance.BorderSize = 0                        
+
+# 結合処理関数 (単一タスクの処理ロジック)
+function Merge-CsvTask {
+    param(
+        [string]$File1,
+        [string]$File2,
+        [string]$OutputFile
+    )
+    
+    # ファイルパスの存在チェック
+    if ([string]::IsNullOrEmpty($File1) -or [string]::IsNullOrEmpty($File2) -or [string]::IsNullOrEmpty($OutputFile)) {
+        throw "ファイルパスが空欄です。"
+    }
+
+    # CSV結合ロジック
+    # Import-Csv -Path $File1 | Export-Csv -Path $OutputFile -NoTypeInformation -Force -Encoding ShiftJIS
+    # Import-Csv -Path $File2 | Export-Csv -Path $OutputFile -NoTypeInformation -Append -Encoding ShiftJIS
+   Import-Csv -Path $File1 -Encoding Default | Export-Csv -Path $OutputFile -NoTypeInformation -Force -Encoding Default -UseQuotes Never
+    
+    Import-Csv -Path $File2 -Encoding Default | Export-Csv -Path $OutputFile -NoTypeInformation -Append -Encoding Default -UseQuotes Never
+    return "成功"
+}
+
+# ボタンクリック時のアクション
+$action = {
+    $totalTasks = 0
+    $successCount = 0
+    $errorMessage = ""
+
+    # DataGridViewの各行をループ処理
+    foreach ($row in $dataGridView.Rows) {
+        # 最終行（空行、ユーザーが行追加のために用意された行）はスキップ
+        if ($row.IsNewRow) { continue }
+        
+        $totalTasks++
+
+        # セルからファイルパスを取得（ToString()で値を確実に取得）
+        $FileA = $row.Cells[0].Value.ToString()
+        $FileB = $row.Cells[1].Value.ToString()
+        $OutputFile = $row.Cells[2].Value.ToString()
+
+        try {
+            Merge-CsvTask -File1 $FileA -File2 $FileB -OutputFile $OutputFile
+            $successCount++
+        }
+        catch {
+            $errorMessage += "タスク #$totalTasks ($OutputFile) エラー: $($_.Exception.Message)" + [System.Environment]::NewLine
+        }
+    }
+
+    # 結果表示
+    if ($errorMessage) {
+        [System.Windows.Forms.MessageBox]::Show(
+            "結合処理中にエラーが発生しました。成功数: $successCount/$totalTasks" + [System.Environment]::NewLine + [System.Environment]::NewLine + $errorMessage, 
+            "一部エラー", 
+            [System.Windows.Forms.MessageBoxButtons]::OK, 
+            [System.Windows.Forms.MessageBoxIcon]::Warning
+        )
+    } elseif ($totalTasks -eq 0) {
+         [System.Windows.Forms.MessageBox]::Show("実行するタスクがリストにありません。", "警告", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
+    } else {
+        [System.Windows.Forms.MessageBox]::Show("全 $totalTasks 件のCSVファイルの結合が完了しました！", "完了", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+    }
+}
+
+# ボタンにアクションを関連付け
+$button.Add_Click($action)
+
+# フォームにコントロールを追加
+$form.Controls.Add($labelHeader)
+$form.Controls.Add($dataGridView)
+$form.Controls.Add($button)
+
+# フォームの表示
+$form.ShowDialog() | Out-Null
